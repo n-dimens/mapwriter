@@ -39,7 +39,7 @@ public class Texture {
 		this.h = Render.getTextureHeight();
 		this.pixelBuf = MwUtil.allocateDirectIntBuffer(this.w * this.h);
 		this.getPixelsFromExistingTexture();
-		MwUtil.log("created new MwTexture from GL texture id %d (%dx%d) (%d pixels)", this.id, this.w, this.h, this.pixelBuf.limit());
+		MwUtil.logInfo("Created new MwTexture from GL texture id %d (%dx%d) (%d pixels)", this.id, this.w, this.h, this.pixelBuf.limit());
 	}
 	
 	// free up the resources used by the GL texture
@@ -48,7 +48,8 @@ public class Texture {
 			try {
 				GL11.glDeleteTextures(this.id);
 			} catch (NullPointerException e) {
-				MwUtil.log("MwTexture.close: null pointer exception (texture %d)", this.id);
+				MwUtil.logError("Null pointer exception (texture %d)", this.id);
+				throw e;
 			}
 			this.id = 0;
 		}
@@ -83,9 +84,10 @@ public class Texture {
 			}
 			catch (IllegalArgumentException e)
 			{
-				MwUtil.log("MwTexture.getRGB: IllegalArgumentException (icon name: %s; height: %d; width: %d; MaxU: %f; MinU: %f; MaxV: %f; MinV: %f)", icon.getIconName(), icon.getIconHeight(), icon.getIconWidth(), icon.getMaxU(),icon.getMinU(), icon.getMaxV(),icon.getMinV());
-				MwUtil.log("MwTexture.getRGB: IllegalArgumentException (pos: %d)", bufOffset + (i * this.w));
-				MwUtil.log("MwTexture.getRGB: IllegalArgumentException (buffersize: %d)", this.pixelBuf.limit());
+				MwUtil.logError("IllegalArgumentException (icon name: %s; height: %d; width: %d; MaxU: %f; MinU: %f; MaxV: %f; MinV: %f)", icon.getIconName(), icon.getIconHeight(), icon.getIconWidth(), icon.getMaxU(),icon.getMinU(), icon.getMaxV(),icon.getMinV());
+				MwUtil.logError("IllegalArgumentException (pos: %d)", bufOffset + (i * this.w));
+				MwUtil.logError("IllegalArgumentException (buffersize: %d)", this.pixelBuf.limit());
+				throw e;
 			}
 		}
 	}
@@ -133,15 +135,11 @@ public class Texture {
 	
 	// update texture from pixels in pixelBuf
 	public synchronized void updateTextureArea(int x, int y, int w, int h) {
-		try {
-			this.bind();
-			GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, this.w);
-			this.pixelBuf.position((y * this.w) + x);
-			GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
-			GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
-		} catch (NullPointerException e) {
-			MwUtil.log("MwTexture.updatePixels: null pointer exception (texture %d)", this.id);
-		}
+		this.bind();
+		GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, this.w);
+		this.pixelBuf.position((y * this.w) + x);
+		GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, x, y, w, h, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
+		GL11.glPixelStorei(GL11.GL_UNPACK_ROW_LENGTH, 0);
 	}
 	
 	public synchronized void updateTexture() {
@@ -152,15 +150,11 @@ public class Texture {
 	
 	// copy pixels from GL texture to pixelBuf
 	private synchronized void getPixelsFromExistingTexture() {
-		try {
-			this.bind();
-			this.pixelBuf.clear();
-			GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
-			// getTexImage does not seem to advance the buffer position, so flip does not work here
-			// this.pixelBuf.flip()
-			this.pixelBuf.limit(this.w * this.h);
-		} catch (NullPointerException e) {
-			MwUtil.log("MwTexture.getPixels: null pointer exception (texture %d)", this.id);
-		}
+		this.bind();
+		this.pixelBuf.clear();
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, this.pixelBuf);
+		// getTexImage does not seem to advance the buffer position, so flip does not work here
+		// this.pixelBuf.flip()
+		this.pixelBuf.limit(this.w * this.h);
 	}
 }

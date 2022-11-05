@@ -127,7 +127,7 @@ public class Render {
 		int h = getTextureHeight();
 		int depth = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL12.GL_TEXTURE_DEPTH);
 		int format = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_INTERNAL_FORMAT);
-		MwUtil.log("texture %d parameters: width=%d, height=%d, depth=%d, format=%08x", texture, w, h, depth, format);		
+		MwUtil.logInfo("Texture %d parameters: width=%d, height=%d, depth=%d, format=%08x", texture, w, h, depth, format);
 	}
 	
 	public static int getMaxTextureSize() {
@@ -150,21 +150,17 @@ public class Render {
 	
 	// draw rectangle with texture UV coordinates specified (so only part of the texture fills the rectangle).
 	public static void drawTexturedRect(double x, double y, double w, double h, double u1, double v1, double u2, double v2) {
-		try {
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	        Tessellator tes = Tessellator.instance;
-	        tes.startDrawingQuads();
-	        tes.addVertexWithUV(x + w, y,     zDepth, u2, v1);
-	        tes.addVertexWithUV(x,     y,     zDepth, u1, v1);
-			tes.addVertexWithUV(x,     y + h, zDepth, u1, v2);
-			tes.addVertexWithUV(x + w, y + h, zDepth, u2, v2);
-	        tes.draw();
-			GL11.glDisable(GL11.GL_BLEND);
-		} catch (NullPointerException e) {
-			MwUtil.log("MwRender.drawTexturedRect: null pointer exception");
-		}
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		Tessellator tes = Tessellator.instance;
+		tes.startDrawingQuads();
+		tes.addVertexWithUV(x + w, y, zDepth, u2, v1);
+		tes.addVertexWithUV(x, y, zDepth, u1, v1);
+		tes.addVertexWithUV(x, y + h, zDepth, u1, v2);
+		tes.addVertexWithUV(x + w, y + h, zDepth, u2, v2);
+		tes.draw();
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
 	public static void drawArrow(double x, double y, double angle, double length) {

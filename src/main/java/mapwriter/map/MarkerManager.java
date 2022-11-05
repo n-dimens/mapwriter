@@ -36,7 +36,7 @@ public class MarkerManager {
 					if (marker != null) {
 						this.addMarker(marker);
 					} else {
-						MwUtil.log("error: could not load " + key + " from config file");
+						MwUtil.logError("Could not load " + key + " from config file");
 					}
 				}
 			}
@@ -109,7 +109,7 @@ public class MarkerManager {
 				marker = null;
 			}
 		} else {
-			MwUtil.log("Marker.stringToMarker: invalid marker '%s'", s);
+			MwUtil.logWarning("Invalid marker '%s'", s);
 		}
 		return marker;
 	}

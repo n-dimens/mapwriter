@@ -7,6 +7,7 @@ import java.nio.IntBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import mapwriter.forge.MwForge;
@@ -18,27 +19,33 @@ import net.minecraft.world.chunk.Chunk;
 public class MwUtil {
 	
 	public final static Pattern patternInvalidChars = Pattern.compile("[^\\p{IsAlphabetic}\\p{Digit}_]");
-	
-	public static void logInfo(String s, Object...args) {
-		MwForge.logger.info(String.format(s, args));
+
+	public static void logInfo(String s, Object... args) {
+		log(String.format(s, args), MwForge.logger::info);
 	}
-	
-	public static void logWarning(String s, Object...args) {
-		MwForge.logger.warn(String.format(s, args));
+
+	public static void logWarning(String s, Object... args) {
+		log(String.format(s, args), MwForge.logger::warn);
 	}
-	
-	public static void logError(String s, Object...args) {
-		MwForge.logger.error(String.format(s, args));
+
+	public static void logError(String s, Object... args) {
+		log(String.format(s, args), MwForge.logger::error);
 	}
-	
-	public static void debug(String s, Object...args) {
-		MwForge.logger.debug(String.format(s, args));
+
+	public static void logDebug(String s, Object... args) {
+		log(String.format(s, args), MwForge.logger::debug);
 	}
-	
-	public static void log(String s, Object...args) {
-		logInfo(String.format(s, args));
+
+	private static void log(String message, Consumer<String> logMethod) {
+		StackTraceElement[] stack =Thread.currentThread().getStackTrace();
+		if (stack.length >= 4) {
+			StackTraceElement caller = Thread.currentThread().getStackTrace()[3];
+			logMethod.accept(String.format("[%s::%s:%d] ", caller.getClassName(), caller.getMethodName(), caller.getLineNumber()) + message);
+		} else {
+			logMethod.accept(message);
+		}
 	}
-	
+
 	public static String mungeString(String s) {
 		s = s.replace('.', '_');
 		s = s.replace('-', '_');
@@ -72,7 +79,7 @@ public class MwUtil {
 		if (thePlayer != null) {
 			thePlayer.addChatMessage(new ChatComponentText(msg));
 		}
-		MwUtil.log("%s", msg);
+		MwUtil.logInfo("%s", msg);
 	}
 	
 	public static File getDimensionDir(File worldDir, int dimension) {

@@ -39,7 +39,7 @@ public class MwConfig extends Configuration {
 					value &= 0xffffffffL;
 				}
 			} catch (NumberFormatException e) {
-				MwUtil.log("error: could not read colour from config file %s:%s", category, key);
+				MwUtil.logError("Could not read colour from config file %s:%s", category, key);
 				value = -1;
 			}
 		}

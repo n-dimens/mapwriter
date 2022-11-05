@@ -273,9 +273,9 @@ public class Mw {
 			}
 			textureSize /= 2;
 			
-			MwUtil.log("GL reported max texture size = %d", maxTextureSize);
-			MwUtil.log("texture size from config = %d", this.configTextureSize);
-			MwUtil.log("setting map texture size to = %d", textureSize);
+			MwUtil.logInfo("GL reported max texture size = %d", maxTextureSize);
+			MwUtil.logInfo("Texture size from config = %d", this.configTextureSize);
+			MwUtil.logInfo("Setting map texture size to = %d", textureSize);
 			
 			this.textureSize = textureSize;
 			if (this.ready) {
@@ -457,11 +457,11 @@ public class Mw {
 		}
 		
 		if ((this.mc.theWorld == null) || (this.mc.thePlayer == null)) {
-			MwUtil.log("Mw.load: world or player is null, cannot load yet");
+			MwUtil.logWarning("World or player is null, cannot load yet");
 			return;
 		}
 		
-		MwUtil.log("Mw.load: loading...");
+		MwUtil.logInfo("Loading...");
 		
 		this.multiplayer = !this.mc.isIntegratedServerRunning();
 		
@@ -476,7 +476,7 @@ public class Mw {
 			if (d.isDirectory()) {
 				saveDir = d;
 			} else {
-				MwUtil.log("error: no such directory %s", this.saveDirOverride);
+				MwUtil.logError("No such directory %s", this.saveDirOverride);
 			}
 		}
 		
@@ -494,7 +494,7 @@ public class Mw {
 			this.imageDir.mkdirs();
 		}
 		if (!this.imageDir.isDirectory()) {
-			MwUtil.log("Mapwriter: ERROR: could not create images directory '%s'", this.imageDir.getPath());
+			MwUtil.logError("Could not create images directory '%s'", this.imageDir.getPath());
 		}
 		
 		this.tickCounter = 0;
@@ -527,12 +527,12 @@ public class Mw {
 			//this.regionManager.recreateAllZoomLevels();
 		//}
 		
-		MwUtil.log("Mw.load: Done");
+		MwUtil.logInfo("Done");
 	}
 	
 	public void close() {
 		
-		MwUtil.log("Mw.close: closing...");
+		MwUtil.logInfo("Closing ready=" + this.ready);
 		
 		if (this.ready) {
 			this.ready = false;
@@ -545,11 +545,11 @@ public class Mw {
 			this.executor.addTask(new CloseRegionManagerTask(this.regionManager));
 			this.regionManager = null;
 			
-			MwUtil.log("waiting for %d tasks to finish...", this.executor.tasksRemaining());
+			MwUtil.logInfo("Waiting for %d tasks to finish...", this.executor.tasksRemaining());
 			if (this.executor.close()) {
-				MwUtil.log("error: timeout waiting for tasks to finish");
+				MwUtil.logError("Timeout waiting for tasks to finish");
 			}
-			MwUtil.log("done");
+			MwUtil.logInfo("Done");
 			
 			this.playerTrail.close();
 			

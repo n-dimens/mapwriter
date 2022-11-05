@@ -63,7 +63,7 @@ public class BackgroundExecutor {
 			task.setFuture(future);
 			this.taskQueue.add(task);
 		} else {
-			MwUtil.log("MwExecutor.addTask: error: cannot add task to closed executor");
+			MwUtil.logError("Cannot add task to closed executor");
 		}
 		return this.closed;
 	}
@@ -115,7 +115,7 @@ public class BackgroundExecutor {
 			error = !this.executor.awaitTermination(10L, TimeUnit.SECONDS);
 			error = false;
 		} catch (InterruptedException e) {
-			MwUtil.log("error: IO task was interrupted during shutdown");
+			MwUtil.logError("IO task was interrupted during shutdown");
 			e.printStackTrace();
 		}
 		this.closed = true;

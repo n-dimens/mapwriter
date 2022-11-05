@@ -75,6 +75,7 @@ public class ChunkManager {
 	}
 	
 	public synchronized void saveChunks() {
+		MwUtil.logInfo("Save chunks");
 		for (Map.Entry<Chunk, Integer> entry : this.chunkMap.entrySet()) {
 			int flags = entry.getValue();
 			if ((flags & VIEWED_FLAG) != 0) {
