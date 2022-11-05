@@ -6,7 +6,7 @@ public class SmallMapMode extends MapMode {
 	public SmallMapMode(MwConfig config) {
 		super(config, "smallMap");
 		
-		this.heightPercent = 30;
+		this.heightPercent = 25;
 		this.marginTop = 10;
 		this.marginBottom = -1;
 		this.marginLeft = -1;

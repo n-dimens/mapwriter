@@ -279,7 +279,7 @@ public class RegionFile {
 	
 	// basically an in memory byte array that writes its contents
 	// to a file when it is closed.
-	private class RegionFileChunkBuffer extends ByteArrayOutputStream {
+	private static class RegionFileChunkBuffer extends ByteArrayOutputStream {
 	    private final int x;
 	    private final int z;
 	    private final RegionFile regionFile;
